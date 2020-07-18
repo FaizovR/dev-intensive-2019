@@ -1,8 +1,5 @@
 package ru.skillbranch.devintensive.utils
 
-import ru.skillbranch.devintensive.models.User
-import kotlin.concurrent.fixedRateTimer
-
 object Utils {
     fun parseFullName(fullName:String?): Pair<String?, String?> {
 

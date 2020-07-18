@@ -1,8 +1,5 @@
 package ru.skillbranch.devintensive.models
 
-import android.provider.ContactsContract
-import java.sql.ClientInfoStatus
-
 class UserView (
     val id: String,
     val fullName: String,
@@ -20,6 +17,5 @@ class UserView (
             status: $status
             initials: $initials
         """.trimIndent())
-
     }
 }

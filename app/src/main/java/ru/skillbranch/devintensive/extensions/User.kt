@@ -20,4 +20,3 @@ fun User.toUserView() : UserView {
         status = statusListener
     )
 }
-
