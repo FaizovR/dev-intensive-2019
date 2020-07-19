@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
+import ru.skillbranch.devintensive.extensions.hideKeyboard
 import ru.skillbranch.devintensive.models.Bender
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -46,7 +48,26 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         textTxt.text = benderObj.askQuestion()
 
-        sendBtn.setOnClickListener(this)
+        sendBtn.setOnClickListener {
+            sendAnswer()
+            hideKeyboard()
+        }
+
+        messageEt.setOnEditorActionListener { _, i, _ ->
+            if (i == EditorInfo.IME_ACTION_DONE){
+                sendAnswer()
+                hideKeyboard()
+                true
+            } else false
+        }
+    }
+
+    private fun sendAnswer(){
+        val (phrase, color) = benderObj.listenAnswer(messageEt.text.toString())
+        messageEt.text.clear()
+        val (r, g, b) = color
+        benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
+        textTxt.text = phrase
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -54,15 +75,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         outState.putString("STATUS", benderObj.status.name)
         outState.putString("QUESTION", benderObj.question.name)
         Log.d(TAG, "onSaveInstanceState: ${benderObj.status.name} ${benderObj.question.name}")
-    }
-
-    override fun onClick(v: View?) {
-        if (v?.id == R.id.iv_send) {
-            val (phrase, color) = benderObj.listenAnswer(messageEt.text.toString().toLowerCase())
-            messageEt.setText("")
-            val (r, g, b) = color
-            benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
-            textTxt.text = phrase
-        }
     }
 }
