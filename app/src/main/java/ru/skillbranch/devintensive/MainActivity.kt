@@ -35,41 +35,24 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         val status = savedInstanceState?.getString("STATUS") ?: Bender.Status.NORMAL.name
         val question = savedInstanceState?.getString("QUESTION") ?: Bender.Question.NAME.name
-        benderObj = Bender(Bender.Status.valueOf(status))
+        benderObj = Bender(Bender.Status.valueOf(status), Bender.Question.valueOf(question))
+
+        Log.d("M_MainActivity","onCreate")
 
         val (r, g, b) = benderObj.status.color
-        benderImage.setColorFilter((Color.rgb(r, g, b)), PorterDuff.Mode.MULTIPLY)
+        benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
+
+        textTxt.text = benderObj.askQuestion()
 
         textTxt.text = benderObj.askQuestion()
 
         sendBtn.setOnClickListener(this)
     }
 
-    override fun onRestart() {
-        super.onRestart()
-    }
-
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
-
-        outState?.putString("STATUS", benderObj.status.name)
-        outState?.putString("QUESTION", benderObj.question.name)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("STATUS", benderObj.status.name)
+        outState.putString("QUESTION", benderObj.question.name)
         Log.d(TAG, "onSaveInstanceState: ${benderObj.status.name} ${benderObj.question.name}")
     }
 

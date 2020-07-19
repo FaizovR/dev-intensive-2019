@@ -12,12 +12,30 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
     }
 
     fun listenAnswer(answer: String) : Pair<String, Triple<Int, Int, Int>> {
-        return if (question.answers.contains((answer))) {
-            question = question.nextQuestion()
-            "Отлично - это правильный ответ!\n${question.question}" to status.color
-        } else {
-            status = status.nextStatus()
-             "Это не правильный ответ!\n${question.question}" to status.color
+        return when {
+            question == Question.NAME && (answer.isEmpty() || answer.first().isLowerCase() || answer.first().isDigit()) ->
+                "Имя должно начинаться с заглавной буквы\n${question.question}" to status.color
+            question == Question.PROFESSION && (answer.isEmpty() || answer.first().isUpperCase() || answer.first().isDigit()) ->
+                "Профессия должна начинаться со строчной буквы\n${question.question}" to status.color
+            question == Question.MATERIAL && answer.contains(Regex("[0-9]")) ->
+                "Материал не должен содержать цифр\n${question.question}" to status.color
+            question == Question.BDAY && answer.contains(Regex("\\D")) ->
+                "Год моего рождения должен содержать только цифры\n${question.question}" to status.color
+            question == Question.SERIAL && (answer.contains(Regex("\\D")) || answer.length != 7) ->
+                "Серийный номер содержит только цифры, и их 7\n${question.question}" to status.color
+            question == Question.IDLE -> "На этом все, вопросов больше нет" to status.color
+            else -> if (question.answers.contains(answer.toLowerCase())) {
+                question = question.nextQuestion()
+                "Отлично - ты справился\n${question.question}" to status.color
+            } else {
+                status = status.nextStatus()
+                if (status == Status.NORMAL) {
+                    question = Question.NAME
+                    "Это неправильный ответ. Давай все по новой\n${question.question}" to status.color
+                } else {
+                    "Это неправильный ответ\n${question.question}" to status.color
+                }
+            }
         }
     }
 
